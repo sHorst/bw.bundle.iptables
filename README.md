@@ -3,6 +3,16 @@ IPTables Modul
 
 This module checks the METADATA for iptables rules and applies them. It ensures that the Rules are set after the apply.
 
+Install
+-------
+
+To make this bundle work, you need to insert the libs/iptables.py and items/iptables.py to the bw repository. This can be done with this command:
+
+```
+ln -s ../bundles/iptables/libs/iptables.py libs/iptables.py
+ln -s ../bundles/iptables/items/iptables.py items/iptables.py
+```
+
 Demo Metadata
 -------------
 
