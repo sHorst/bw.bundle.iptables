@@ -1,0 +1,18 @@
+#!/bin/bash -eu
+
+# load all iptables rules
+for file in /etc/network/iptables.*.rules; do
+    cat $file | iptables-restore
+done
+
+# load all ip6tables rules
+for file in /etc/network/ip6tables.*.rules; do
+    cat $file | ip6tables-restore
+done
+
+# Reload sysctl stuff the way ubuntu does it
+# (One could also do a "service procps restart" but I don't know what
+# the ubuntu people will do to this file in the future ...)
+cat /etc/sysctl.d/*.conf /etc/sysctl.conf | sysctl -e -p -
+
+exit 0
