@@ -36,8 +36,23 @@ directories = {
     }
 }
 
+check = False
+port = None
+if node.has_bundle('openssh'):
+    port = node.metadata.get('openssh', {}).get('port', 22)
+    check = True
+
+if 'check' in node.metadata.get('iptables', {}):
+    check = node.metadata['iptables']['check']
+
+if 'check_port' in node.metadata.get('iptables', {}):
+    port = node.metadata['iptables']['check_port']
+
+
 iptables = {
     'filter': {
+        'check': check,
+        'check_port': port,
         'chains': {
             # open up local loopback
             'INPUT': {
@@ -79,6 +94,12 @@ iptables = {
     }
 }
 
+default_table = {
+    'check': check,
+    'check_port': port,
+    'chains': {}
+}
+
 # Set Up counting rules
 for interface in sorted(node.metadata.get('interfaces', {}).keys()):
     # allow ICMP
@@ -110,10 +131,9 @@ for interface in sorted(node.metadata.get('interfaces', {}).keys()):
 
 # create policy rules
 for table in node.metadata.get('iptables', {}).get('policies', {}):
-    if table not in iptables:
-        iptables[table] = {
-            'chains': {},
-        }
+    # set default table
+    iptables.setdefault(table, default_table.copy())
+
     for chain in node.metadata['iptables']['policies'][table].keys():
         policy = node.metadata['iptables']['policies'][table][chain]
 
@@ -129,10 +149,8 @@ for table in node.metadata.get('iptables', {}).get('policies', {}):
 for rule in sorted(node.metadata.get('iptables', {}).get('rules', []), key=repo.libs.iptables.convert_to_iptables_rule):
     table = rule.get('table', 'filter')
 
-    if table not in iptables:
-        iptables[table] = {
-            'chains': {}
-        }
+    # set default table
+    iptables.setdefault(table, default_table.copy())
 
     chain = rule.pop('chain', 'INPUT')
     if chain not in iptables[table]['chains']:

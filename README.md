@@ -18,6 +18,8 @@ Demo Metadata
 
 ```python
 'iptables': {
+    'check': True,  # these are optional
+    'check_port': 22,  # and default to the configured SSH port
     'policies': {
         'filter': {
             'INPUT': 'DROP',
