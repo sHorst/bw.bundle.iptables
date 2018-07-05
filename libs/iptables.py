@@ -19,6 +19,8 @@ allowed_keys = {
     'tcp_src_port': '-m tcp --sport {}',
     'udp_dest_port': '-m udp --dport {}',
     'udp_src_port': '-m udp --sport {}',
+    'dest_port_range': '-m multiport --dports {}',
+    'src_port_range': '-m multiport --sports {}',
     'icmp-type': '-m icmp --icmp-type {}',
     'icmpv6-type': '-p icmpv6 --icmpv6-type {}',
     'mark': '-m mark --mark {}',
@@ -238,6 +240,16 @@ class IptablesRule(dict):
             self['tcp_src_port'] = port
         elif protocol == 'udp':
             self['udp_src_port'] = port
+
+        return self
+
+    def dest_port_range(self, start_port, end_port):
+        self['dest_port_range'] = "{}:{}".format(start_port, end_port)
+
+        return self
+
+    def src_port_range(self, start_port, end_port):
+        self['src_port_range'] = "{}:{}".format(start_port, end_port)
 
         return self
 

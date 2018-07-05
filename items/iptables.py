@@ -29,6 +29,8 @@ allowed_keys = {
     'tcp_src_port': '-m tcp --sport {}',
     'udp_dest_port': '-m udp --dport {}',
     'udp_src_port': '-m udp --sport {}',
+    'dest_port_range': '-m multiport --dports {}',
+    'src_port_range': '-m multiport --sports {}',
     'icmp-type': '-m icmp --icmp-type {}',
     'icmpv6-type': '-p icmpv6 --icmpv6-type {}',
     'mark': '-m mark --mark {}',
@@ -393,10 +395,8 @@ class IptablesTable(Item):
             result = sock.connect_ex((self.node.hostname, check_port))
             if result != 0:
                 raise BundleError(_(
-                    "iptables broke SSH connection to {port}. Waiting for reset. {item} in bundle '{bundle}'"
+                    "iptables broke connection to {port}. Waiting for reset (60s)."
                 ).format(
-                    bundle=bundle.name,
-                    item=item_id,
                     port=check_port,
                 ))
 
