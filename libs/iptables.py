@@ -27,6 +27,7 @@ allowed_keys = {
     'comment': '-m comment --comment {}',
     'custom': '{}',
     'jump': '-j {}',
+    'pkt_type': '-m pkttype --pkt_type {}',
 }
 
 
@@ -205,6 +206,14 @@ class IptablesRule(dict):
 
     def state_new(self):
         return self.state('NEW')
+
+    # pkt_type
+    def pkt_type(self, pkt_type):
+        self['pkt_type'] = pkt_type
+        return self
+
+    def multicast(self):
+        return self.state('multicast')
 
     # protocol
     def protocol(self, protocol):

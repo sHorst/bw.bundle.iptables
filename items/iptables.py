@@ -37,6 +37,7 @@ allowed_keys = {
     'comment': '-m comment --comment {}',
     'custom': '{}',
     'jump': '-j {}',
+    'pkt_type': '-m pkttype --pkt_type {}',
 }
 
 DEFAULT_POLICIES = {
