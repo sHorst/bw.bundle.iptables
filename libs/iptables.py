@@ -213,7 +213,7 @@ class IptablesRule(dict):
         return self
 
     def multicast(self):
-        return self.state('multicast')
+        return self.pkt_type('multicast')
 
     # protocol
     def protocol(self, protocol):
