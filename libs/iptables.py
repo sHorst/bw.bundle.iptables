@@ -14,6 +14,7 @@ allowed_keys = {
     'protocol': '-p {}',
     'src_range': '-m iprange --src-range {}',
     'dest_range': '-m iprange --dst-range {}',
+    'pkt_type': '-m pkttype --pkt-type {}',
     'state': '-m state --state {}',
     'tcp_dest_port': '-m tcp --dport {}',
     'tcp_src_port': '-m tcp --sport {}',
@@ -205,6 +206,14 @@ class IptablesRule(dict):
 
     def state_new(self):
         return self.state('NEW')
+
+    # pkt_type
+    def pkt_type(self, pkt_type):
+        self['pkt_type'] = pkt_type
+        return self
+
+    def multicast(self):
+        return self.pkt_type('multicast')
 
     # protocol
     def protocol(self, protocol):
