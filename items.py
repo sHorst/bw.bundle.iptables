@@ -2,15 +2,6 @@ IP_V4 = 4
 IP_V6 = 6
 IP_V4_AND_6 = 46
 
-pkg_apt = {
-    "iptables": {
-        'installed': True,
-    },
-    "xtables-addons-common": {
-        'installed': True,
-    },
-}
-
 files = {
     "/etc/network/if-up.d/restore-iptables": {
         'source': "restore-iptables",
