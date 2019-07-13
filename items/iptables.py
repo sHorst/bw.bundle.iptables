@@ -429,7 +429,7 @@ class IptablesTable(Item):
             if line[0:3] == "-A ":
                 # if it does not exists, the iptables-save output is broken
                 if not is_ignored_rule(line, ignored_chains, ignored_rules):
-                    rules_v4.append(line)
+                    rules_v4.append(line.strip())  # debian 10 adds spaces to the end of some lines
 
         res = self.node.run("ip6tables-save -t {table}".format(table=table), may_fail=True)
         ip6tables = res.stdout.decode('utf-8').strip()
@@ -453,7 +453,7 @@ class IptablesTable(Item):
                 # if it does not exists, the iptables-save output is broken
 
                 if not is_ignored_rule(line, ignored_chains, ignored_rules):
-                    rules_v6.append(line)
+                    rules_v6.append(line.strip())  # debian 10 adds spaces to the end of some lines
 
         sdict = {
             'type': 'iptables',

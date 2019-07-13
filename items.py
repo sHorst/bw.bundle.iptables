@@ -6,10 +6,11 @@ pkg_apt = {
     "iptables": {
         'installed': True,
     },
-    "xtables-addons-common": {
-        'installed': True,
-    },
 }
+
+if node.os == 'debian':
+    if node.os_version[0] in (8, 9):
+        pkg_apt["xtables-addons-common"] = {'installed': True, }
 
 files = {
     "/etc/network/if-up.d/restore-iptables": {
