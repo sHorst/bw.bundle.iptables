@@ -14,11 +14,14 @@ allowed_keys = {
     'protocol': '-p {}',
     'src_range': '-m iprange --src-range {}',
     'dest_range': '-m iprange --dst-range {}',
+    'pkt_type': '-m pkttype --pkt-type {}',
     'state': '-m state --state {}',
     'tcp_dest_port': '-m tcp --dport {}',
     'tcp_src_port': '-m tcp --sport {}',
     'udp_dest_port': '-m udp --dport {}',
     'udp_src_port': '-m udp --sport {}',
+    'dest_port_range': '-m multiport --dports {}',
+    'src_port_range': '-m multiport --sports {}',
     'icmp-type': '-m icmp --icmp-type {}',
     'icmpv6-type': '-p icmpv6 --icmpv6-type {}',
     'mark': '-m mark --mark {}',
@@ -204,6 +207,14 @@ class IptablesRule(dict):
     def state_new(self):
         return self.state('NEW')
 
+    # pkt_type
+    def pkt_type(self, pkt_type):
+        self['pkt_type'] = pkt_type
+        return self
+
+    def multicast(self):
+        return self.pkt_type('multicast')
+
     # protocol
     def protocol(self, protocol):
         self['protocol'] = protocol
@@ -238,6 +249,16 @@ class IptablesRule(dict):
             self['tcp_src_port'] = port
         elif protocol == 'udp':
             self['udp_src_port'] = port
+
+        return self
+
+    def dest_port_range(self, start_port, end_port):
+        self['dest_port_range'] = "{}:{}".format(start_port, end_port)
+
+        return self
+
+    def src_port_range(self, start_port, end_port):
+        self['src_port_range'] = "{}:{}".format(start_port, end_port)
 
         return self
 

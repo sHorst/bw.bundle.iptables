@@ -13,11 +13,17 @@ ln -s ../bundles/iptables/libs/iptables.py libs/iptables.py
 ln -s ../bundles/iptables/items/iptables.py items/iptables.py
 ```
 
+Dependencies
+------------
+Packages defined in ```metadata.py``` and installed via [apt-Bundle](https://github.com/sHorst/bw.bundle.apt).
+
 Demo Metadata
 -------------
 
 ```python
 'iptables': {
+    'check': True,  # these are optional
+    'check_port': 22,  # and default to the configured SSH port
     'policies': {
         'filter': {
             'INPUT': 'DROP',
