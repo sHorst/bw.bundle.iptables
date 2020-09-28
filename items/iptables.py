@@ -329,7 +329,7 @@ class IptablesTable(Item):
         "pkg_zypper:",
     ]
     ITEM_ATTRIBUTES = {
-        'chains': {},
+        'chains': None,
         'check': True,
         'check_port': 22,
     }
@@ -502,7 +502,7 @@ class IptablesTable(Item):
                 table=item_id[len(bundle.name) + 1:],
             ))
 
-        if not attributes.get('chains', None):
+        if not attributes.get('chains', None) or not isinstance(attributes['chains'], dict):
             raise BundleError(_(
                 "chains must be set on {item} in bundle '{bundle}'"
             ).format(
