@@ -11,11 +11,14 @@ allowed_keys = {
     'not_destination': '! -d {}',
     'input': '-i {}',
     'output': '-o {}',
+    'not_input': '! -i {}',
+    'not_output': '! -o {}',
     'protocol': '-p {}',
     'src_range': '-m iprange --src-range {}',
     'dest_range': '-m iprange --dst-range {}',
     'pkt_type': '-m pkttype --pkt-type {}',
     'state': '-m state --state {}',
+    'ctstate': '-m conntrack --ctstate {}',
     'tcp_dest_port': '-m tcp --dport {}',
     'tcp_src_port': '-m tcp --sport {}',
     'udp_dest_port': '-m udp --dport {}',
@@ -172,13 +175,19 @@ class IptablesRule(dict):
         return self.jump('REJECT')
 
     # input
-    def input(self, input_interface):
-        self['input'] = input_interface
+    def input(self, input_interface, negate=False):
+        if negate:
+            self['not_input'] = input_interface
+        else:
+            self['input'] = input_interface
         return self
 
     # output
-    def output(self, output_interface):
-        self['output'] = output_interface
+    def output(self, output_interface, negate=False):
+        if negate:
+            self['not_output'] = output_interface
+        else:
+            self['output'] = output_interface
         return self
 
     # source
@@ -202,6 +211,11 @@ class IptablesRule(dict):
     # state
     def state(self, state):
         self['state'] = state
+        return self
+
+    # state
+    def ctstate(self, state):
+        self['ctstate'] = state
         return self
 
     def state_new(self):
