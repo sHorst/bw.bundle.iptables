@@ -10,8 +10,8 @@ allowed_keys = {
     'destination': '-d {}',
     'not_destination': '! -d {}',
     'input': '-i {}',
-    'output': '-o {}',
     'not_input': '! -i {}',
+    'output': '-o {}',
     'not_output': '! -o {}',
     'protocol': '-p {}',
     'src_range': '-m iprange --src-range {}',
@@ -146,7 +146,7 @@ class IptablesRule(dict):
         super().__init__()
         self.is_ignore = False
         self.is_ignore_chain = False
-        self.prio = 50
+        self.prio_value = 50
         if jump is not None:
             self['jump'] = jump
 
@@ -191,13 +191,19 @@ class IptablesRule(dict):
         return self
 
     # source
-    def source(self, source):
-        self['source'] = source
+    def source(self, source, negate=False):
+        if negate:
+            self['not_source'] = source
+        else:
+            self['source'] = source
         return self
 
     # destination
-    def destination(self, destination):
-        self['destination'] = destination
+    def destination(self, destination, negate=False):
+        if negate:
+            self['not_destination'] = destination
+        else:
+            self['destination'] = destination
         return self
 
     def src_range(self, src_range):
@@ -307,7 +313,7 @@ class IptablesRule(dict):
         return self
 
     def prio(self, prio):
-        self.prio = prio
+        self.prio_value = prio
 
         return self
 
@@ -345,8 +351,8 @@ class IptablesRule(dict):
     
     def __lt__(self, other):
         if isinstance(other, IptablesRule):
-            if self.prio != other.prio:
-                return self.prio < other.prio
+            if self.prio_value != other.prio_value:
+                return self.prio_value < other.prio_value
             if self.get('chain', 'INPUT') != other.get('chain', 'INPUT'):
                 return self.get('chain', 'INPUT') < other.get('chain', 'INPUT')
 
