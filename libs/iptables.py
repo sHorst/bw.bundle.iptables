@@ -147,8 +147,13 @@ class IptablesRule(dict):
         self.is_ignore = False
         self.is_ignore_chain = False
         self.prio_value = 50
-        if jump is not None:
-            self['jump'] = jump
+
+        if isinstance(jump, dict):
+            for k, v in jump.items():
+                self[k] = v
+        else:
+            if jump is not None:
+                self['jump'] = jump
 
     # table
     def table(self, table):
