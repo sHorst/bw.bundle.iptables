@@ -89,6 +89,7 @@ def is_ignored_rule(line, chains, rules):
     for rule in rules:
         line_ignored_by_rule = True
         at_least_one_allowed_key = False
+        allowed_keys['chain'] = '-A {}'
         for key in allowed_keys.keys():
             if key not in rule:
                 continue
@@ -115,6 +116,7 @@ def generate_ignored_rules_and_chains(attributes):
             ignored_chains += [chain_name, ]
 
         for rule in attributes['chains'][chain_name].get('ignored_rules', []):
+            rule['chain'] = chain_name
             ignored_rules += [rule, ]
 
     return ignored_chains, ignored_rules
