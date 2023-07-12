@@ -49,27 +49,29 @@ Demo Metadata
 If you want to add the metadata in another bundle you can use a metadata processor:
 
 ```python
+@metadata_reactor
 def add_iptables_rule(metadata):
+    iptables_rules = {}
     if node.has_bundle("iptables"):
         interfaces = ['main_interface']
         interfaces += metadata.get('nginx', {}).get('additional_interfaces', [])
 
         for interface in interfaces:
-            metadata += (repo.libs.iptables.accept()
+            metaiptables_rulesdata += (repo.libs.iptables.accept()
                          .input(interface)
                          .state_new()
                          .tcp()
                          .dest_port('80'))
 
-            metadata += (repo.libs.iptables.accept()
+            iptables_rules += (repo.libs.iptables.accept()
                          .input(interface)
                          .state_new()
                          .tcp()
                          .dest_port('443'))
         # ignore this chains
         
-        metadata += repo.libs.iptables.jump('MY_CUSTOM_CHAIN').chain('FORWARD').ignore(),
-        metadata += repo.libs.iptables.ignore_chain('FORWARD'),
+        iptables_rules += repo.libs.iptables.jump('MY_CUSTOM_CHAIN').chain('FORWARD').ignore(),
+        iptables_rules += repo.libs.iptables.ignore_chain('FORWARD'),
         
-    return metadata, True
+    return iptables_rules
 ```
