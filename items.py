@@ -184,10 +184,10 @@ for rule in sorted(node.metadata.get('iptables', {}).get('rules', []), key=repo.
 
     # replace public_interface with configured
     if rule.get('input', '') == 'public_interface':
-        rule_copy['input'] = node.metadata['public_interface']
+        rule_copy['input'] = node.metadata['network']['public_interface']
 
     if rule.get('output', '') == 'public_interface':
-        rule_copy['output'] = node.metadata['public_interface']
+        rule_copy['output'] = node.metadata['network']['public_interface']
 
     # replace source == friendlies with configured networks
     if rule.get('source', "") == "friendlies":
