@@ -1,4 +1,6 @@
+import re
 from ipaddress import ip_network
+from re import escape
 
 IP_V4 = 4
 IP_V6 = 6
@@ -302,6 +304,11 @@ class IptablesRule(dict):
         return self
 
     def comment(self, comment):
+        if comment[0] != '"':
+            comment = f'"{comment}'
+        if comment[-1] != '"':
+            comment = f'{comment}"'
+
         self['comment'] = comment
 
         return self
