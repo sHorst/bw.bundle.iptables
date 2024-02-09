@@ -304,9 +304,9 @@ class IptablesRule(dict):
         return self
 
     def comment(self, comment):
-        if comment[0] != '"':
+        if " " in comment and comment[0] != '"':
             comment = f'"{comment}'
-        if comment[-1] != '"':
+        if " "  in comment and comment[-1] != '"':
             comment = f'{comment}"'
 
         self['comment'] = comment
@@ -360,7 +360,7 @@ class IptablesRule(dict):
             metadata['iptables']['rules'].append(self)
 
         return metadata
-    
+
     def __lt__(self, other):
         if isinstance(other, IptablesRule):
             if self.prio_value != other.prio_value:
