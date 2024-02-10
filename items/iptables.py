@@ -89,6 +89,7 @@ def is_ignored_rule(line, chains, rules):
     for rule in rules:
         line_ignored_by_rule = True
         at_least_one_allowed_key = False
+        allowed_keys['chain'] = '-A {}'
         for key in allowed_keys.keys():
             if key not in rule:
                 continue
@@ -115,6 +116,7 @@ def generate_ignored_rules_and_chains(attributes):
             ignored_chains += [chain_name, ]
 
         for rule in attributes['chains'][chain_name].get('ignored_rules', []):
+            rule['chain'] = chain_name
             ignored_rules += [rule, ]
 
     return ignored_chains, ignored_rules
@@ -220,7 +222,23 @@ def generate_rules_and_chains(table, attributes):
     for chain_name in sorted_chains(table, attributes.get('chains', {}).keys()):
         if is_ignored_chain(chain_name, ignored_chains):
             continue
+        if chain_name != 'LOGDROP':
+            chain = attributes['chains'][chain_name]
+            chains.append(':{chain} {policy}'.format(chain=chain_name, policy=chain.get('policy', '-')))
 
+            for rule in chain.get('rules', []):
+                r, v = generate_rule(chain_name, rule)
+                # ignore Rules
+                if is_ignored_rule(r, ignored_chains, ignored_rules):
+                    continue
+
+                if v == IP_V4 or v == IP_V4_AND_6:
+                    rules_v4.append(r)
+
+                if v == IP_V6 or v == IP_V4_AND_6:
+                    rules_v6.append(r)
+    if sorted_chains(table, attributes.get('chains', {}).keys()).get('LOGDROP'):
+        chain_name = 'LOGDROP'
         chain = attributes['chains'][chain_name]
         chains.append(':{chain} {policy}'.format(chain=chain_name, policy=chain.get('policy', '-')))
 
