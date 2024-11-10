@@ -1,3 +1,5 @@
+global node
+
 IP_V4 = 4
 IP_V6 = 6
 IP_V4_AND_6 = 46
@@ -19,6 +21,20 @@ files = {
     "/usr/local/sbin/iptables-clear": {
         'delete': True,
     },
+    "/etc/systemd/systemd/iptables@.service": {
+        'source': 'etc/systemd/systemd/iptables@.service',
+        'content_type': 'jinja2',
+        'mode': '0644',
+        'owner': 'root',
+        'group': 'root',
+    },
+    "/etc/systemd/systemd/iptables.service": {
+        'source': 'etc/systemd/systemd/iptables.service',
+        'content_type': 'jinja2',
+        'mode': '0644',
+        'owner': 'root',
+        'group': 'root',
+    }
 }
 
 directories = {
@@ -254,6 +270,15 @@ for rule in node.metadata.get('iptables', {}).get('ignored', {}).get('rules', []
 
 docs = {}
 for table in iptables.keys():
+    if node.metadata.get('iptables', {}).get('systemd', False):
+        svc_systemd[f'iptables@{table}.service'] = {
+            'enabled': True,
+            'running': True,
+            'needs': [
+                'iptables:',
+            ],
+        }
+
     for chain_name in iptables[table]['chains'].keys():
         chain = iptables[table]['chains'][chain_name]
         policy = 'POLICY: {policy}'.format(policy=chain.get('policy', 'Not Set'))

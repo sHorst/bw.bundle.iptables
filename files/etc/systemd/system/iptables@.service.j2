@@ -1,0 +1,37 @@
+[Unit]
+DefaultDependencies=no
+Wants=network-pre.target
+Wants=systemd-modules-load.service
+Wants=local-fs.target
+Before=network-pre.target
+Before=shutdown.target
+After=systemd-modules-load.service
+After=local-fs.target
+After=dbus.service
+After=polkit.service
+PartOf=iptables.service
+Conflicts=shutdown.target
+ConditionPathExists=/etc/network/
+Documentation=man:iptables man:iptables-restore
+
+[Service]
+Environment=IPTABLES_RULES=/etc/network/iptables.%i.rules
+Environment=IP6TABLES_RULES=/etc/network/ip6tables.%i.rules
+
+Type=oneshot
+# Start iptables-restore with no-flush option with %i.rules
+# NoFlush option (-n) is used to not flush other tables than %I.
+ExecStart=/sbin/iptables-restore -v -n $IPTABLES_RULES
+ExecStart=/sbin/ip6tables-restore -v -n $IP6TABLES_RULES
+# Reload the rules
+ExecReload=/sbin/iptables-restore -v -n $IPTABLES_RULES
+ExecReload=/sbin/ip6tables-restore -v -n $IP6TABLES_RULES
+# Stop and clean with empty rules
+ExecStop=/usr/sbin/iptables -F -t %i
+ExecStop=/usr/sbin/ip6tables -F -t %i
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+# Need /etc/iptables/ip{,6}tables.filter.rules to exist.
+DefaultInstance=filter
