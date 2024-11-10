@@ -21,15 +21,15 @@ files = {
     "/usr/local/sbin/iptables-clear": {
         'delete': True,
     },
-    "/etc/systemd/systemd/iptables@.service": {
-        'source': 'etc/systemd/systemd/iptables@.service',
+    "/etc/systemd/system/iptables@.service": {
+        'source': 'etc/systemd/system/iptables@.service.j2',
         'content_type': 'jinja2',
         'mode': '0644',
         'owner': 'root',
         'group': 'root',
     },
-    "/etc/systemd/systemd/iptables.service": {
-        'source': 'etc/systemd/systemd/iptables.service',
+    "/etc/systemd/system/iptables.service": {
+        'source': 'etc/systemd/system/iptables.service.j2',
         'content_type': 'jinja2',
         'mode': '0644',
         'owner': 'root',
@@ -276,6 +276,7 @@ for table in iptables.keys():
             'running': True,
             'needs': [
                 'iptables:',
+                'file:/etc/systemd/system/iptables@.service',
             ],
         }
 
