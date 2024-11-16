@@ -21,20 +21,6 @@ files = {
     "/usr/local/sbin/iptables-clear": {
         'delete': True,
     },
-    "/etc/systemd/system/iptables@.service": {
-        'source': 'etc/systemd/system/iptables@.service.j2',
-        'content_type': 'jinja2',
-        'mode': '0644',
-        'owner': 'root',
-        'group': 'root',
-    },
-    "/etc/systemd/system/iptables.service": {
-        'source': 'etc/systemd/system/iptables.service.j2',
-        'content_type': 'jinja2',
-        'mode': '0644',
-        'owner': 'root',
-        'group': 'root',
-    }
 }
 
 directories = {
@@ -42,6 +28,34 @@ directories = {
         'purge': True,
     }
 }
+
+if node.metadata.get('iptables', {}).get('systemd', False):
+    files["/etc/systemd/system/iptables.service"] = {
+        'source': 'etc/systemd/system/iptables.service.j2',
+        'content_type': 'jinja2',
+        'mode': '0644',
+        'owner': 'root',
+        'group': 'root',
+        'triggers': [
+            'action:iptables_systemd_daemon-reload',
+        ]
+    }
+
+    actions = {
+        'iptables_systemd_daemon-reload': {
+            'command': 'systemctl daemon-reload',
+            'triggered': True,
+        },
+    }
+    svc_systemd = {
+        f'iptables.service': {
+            'enabled': True,
+            'running': True,
+            'needs': [
+                f'iptable:',
+            ],
+        }
+    }
 
 check = False
 port = None
@@ -270,16 +284,6 @@ for rule in node.metadata.get('iptables', {}).get('ignored', {}).get('rules', []
 
 docs = {}
 for table in iptables.keys():
-    if node.metadata.get('iptables', {}).get('systemd', False):
-        svc_systemd[f'iptables@{table}.service'] = {
-            'enabled': True,
-            'running': True,
-            'needs': [
-                'iptables:',
-                'file:/etc/systemd/system/iptables@.service',
-            ],
-        }
-
     for chain_name in iptables[table]['chains'].keys():
         chain = iptables[table]['chains'][chain_name]
         policy = 'POLICY: {policy}'.format(policy=chain.get('policy', 'Not Set'))

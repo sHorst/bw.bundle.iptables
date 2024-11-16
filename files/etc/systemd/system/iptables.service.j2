@@ -1,10 +1,19 @@
 [Unit]
-Documentation=man:iptables man:iptables-restore
+Description=IP Packet Filtering Framework
+Before=network-pre.target
+Wants=network-pre.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/true
-RemainAfterExit=on
+ExecStart=/etc/network/if-up.d/restore-iptables
+
+ExecReload=/usr/sbin/iptables -F
+ExecReload=/etc/network/if-up.d/restore-iptables
+
+ExecStop=/usr/sbin/iptables -F
+ExecStop=/usr/sbin/ip6tables -F
+
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
