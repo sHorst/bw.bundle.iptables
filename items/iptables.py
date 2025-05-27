@@ -423,8 +423,8 @@ class IptablesTable(Item):
             'table': table,
             'chains_v4': sorted(chains_v4),
             'chains_v6': sorted(chains_v6),
-            'rules_v4': rules_v4,
-            'rules_v6': rules_v6,
+            'rules_v4': sorted(rules_v4),
+            'rules_v6': sorted(rules_v6),
         }
 
         return cdict
@@ -485,8 +485,8 @@ class IptablesTable(Item):
             'table': table,
             'chains_v4': sorted(chains_v4),
             'chains_v6': sorted(chains_v6),
-            'rules_v4': rules_v4,
-            'rules_v6': rules_v6,
+            'rules_v4': sorted(rules_v4),
+            'rules_v6': sorted(rules_v6),
         }
 
         return sdict

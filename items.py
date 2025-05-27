@@ -1,3 +1,5 @@
+global node
+
 IP_V4 = 4
 IP_V6 = 6
 IP_V4_AND_6 = 46
@@ -26,6 +28,34 @@ directories = {
         'purge': True,
     }
 }
+
+if node.metadata.get('iptables', {}).get('systemd', False):
+    files["/etc/systemd/system/iptables.service"] = {
+        'source': 'etc/systemd/system/iptables.service.j2',
+        'content_type': 'jinja2',
+        'mode': '0644',
+        'owner': 'root',
+        'group': 'root',
+        'triggers': [
+            'action:iptables_systemd_daemon-reload',
+        ]
+    }
+
+    actions = {
+        'iptables_systemd_daemon-reload': {
+            'command': 'systemctl daemon-reload',
+            'triggered': True,
+        },
+    }
+    svc_systemd = {
+        f'iptables.service': {
+            'enabled': True,
+            'running': True,
+            'needs': [
+                f'iptable:',
+            ],
+        }
+    }
 
 check = False
 port = None
